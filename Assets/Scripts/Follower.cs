@@ -170,8 +170,8 @@ using Photon.Pun;
             StartCoroutine(TurnOver());
         }
         else
-        {            
-            GetComponent<BoxCollider>().enabled = false;
+        {
+            photonView.RPC("RPC_ToggleTokenCollision", RpcTarget.AllBuffered, false);
             for (int i = 0; i < dice.DiceNumber; i++)
             {
 
@@ -212,8 +212,9 @@ using Photon.Pun;
         dice.diceNumberDisplay.text = "Dice " + dice.DiceNumber;
 
         dice.DiceButton.interactable = true;   
-        yield return new WaitForSeconds(0.5f);         
-        GetComponent<BoxCollider>().enabled = true;
+        yield return new WaitForSeconds(.5f);
+
+        photonView.RPC("RPC_ToggleTokenCollision", RpcTarget.AllBuffered, true);
         //print("TurnOver");
     }
     IEnumerator PauseNturnover()
@@ -222,6 +223,13 @@ using Photon.Pun;
         //TurnOver();
         canCollide = true;
     }
+
+    [PunRPC]
+    public void RPC_ToggleTokenCollision(bool value)
+    {
+        GetComponent<BoxCollider>().enabled = value;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
 
@@ -240,18 +248,16 @@ using Photon.Pun;
             {
                 if(other.tag != "SafeZone")
                 {
-                    print("reset the " + other.gameObject.tag + " position");
+                    Debug.LogError("reset the " + other.gameObject.tag + " position");
                     //photonView.RPC("RPC_CheckPlayerCollision",RpcTarget.All); 
                     ResetPlayer(this);
                 }       
             }
-            else
+            else 
             {
                     Follower folsc = other.gameObject.GetComponent<Follower>();
                     folsc.transform.position += new Vector3(1f,0,0);
-                    transform.position += new Vector3(0,1f, 0);
-                    //transform.localScale = new Vector3(1, 1.25f, 1);
-                    //folsc.transform.localScale = new Vector3(1, 1.25f, 1);              
+                    transform.position += new Vector3(0,1f, 0);           
             }
         }
     }
@@ -294,7 +300,7 @@ using Photon.Pun;
     {
         if (other.gameObject.CompareTag("SafeZone"))
         {
-
+            canCollide = false;
             //transform.localScale = new Vector3(1.5f, 2f, 1.5f);
         }
         

@@ -150,10 +150,9 @@ public class Dice : MonoBehaviourPun
         Debug.Log("SET CAMERA");
     }
     // Update is called once per frame
-    /*void Update()
+    void Update()
     {
-        //diceNumberDisplay.text = "Dice " + DiceNumber;
-        // SmoothTurnTransform();
+        diceNumberDisplay.text = "Dice " + DiceNumber;
         if (Input.GetKeyDown(KeyCode.Q))
         {
             GenerateRandomNumber(1);
@@ -183,7 +182,7 @@ public class Dice : MonoBehaviourPun
         {
             StartCoroutine(UpdateCurrentToken());
         }
-    }*/
+    }
     public void Replay()
     {
         NetworkManager.Instance.LeaveRoom();
@@ -203,8 +202,11 @@ public class Dice : MonoBehaviourPun
     public void GenerateRandomNumber(int numb = 0)
     {
         Debug.LogError("GenerateRandomNumber");
+        if (numb == 0)
+            DiceNumber = Random.Range(1, 7);
+        else
+            DiceNumber = numb;
 
-        DiceNumber = Random.Range(1, 7);
         photonView.RPC("RPC_DisplayDiceNumber", RpcTarget.AllBuffered, DiceNumber);
         PreviousValue = DiceNumber;
         /*if(GameManager.Instance.LocalPlayer.AllTokensInHouse && DiceNumber < 6)

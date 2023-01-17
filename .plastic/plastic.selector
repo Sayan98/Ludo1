@@ -1,0 +1,4 @@
+repository "Ludo.New@Draco_Sayan@cloud"
+  path "/"
+    br "/main"
+    co "/main"
